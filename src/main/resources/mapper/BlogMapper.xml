@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ink.sher.vueblog.mapper.BlogMapper">
+
+    <select id="getSimpleById" resultType="ink.sher.vueblog.entity.Blog">
+        select id, cover, title from t_blog where id = #{id}
+    </select>
+    <select id="getBlogCountByTagId" resultType="java.lang.Integer">
+        select count(blogid) from t_blog_tags where tagid = #{id}
+    </select>
+    <select id="getBlogIdsByTagId" resultType="java.lang.Integer">
+        select blogid from t_blog_tags where tagid = #{id} limit #{start}, #{size}
+    </select>
+</mapper>
