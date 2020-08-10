@@ -3,14 +3,22 @@ package ink.sher.vueblog.mapper;
 import ink.sher.vueblog.entity.Comment;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
-/**
- * <p>
- *  Mapper 接口
- * </p>
- *
- * @author Sher
- * @since 2020-08-08
- */
+import java.util.List;
+
+
 public interface CommentMapper extends BaseMapper<Comment> {
 
+    Integer getCommentCount(Integer id);
+
+    List<Comment> getParentComments(Integer blog);
+
+    List<Comment> getChildComments(Integer comment);
+
+    Integer getMessageCount();
+
+    List<Comment> getParentMessages();
+
+    List<Comment> getChildMessages(Integer id);
+
+    Integer saveMessage(Comment comment);
 }

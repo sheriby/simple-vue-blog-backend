@@ -33,5 +33,6 @@ public class Comment implements Serializable {
 
     private String blogId;
 
+    private String at;
 
 }

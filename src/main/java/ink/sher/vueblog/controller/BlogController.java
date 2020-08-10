@@ -6,12 +6,16 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import ink.sher.vueblog.common.Result;
 import ink.sher.vueblog.dto.BlogDetail;
 import ink.sher.vueblog.dto.BlogInfo;
+import ink.sher.vueblog.dto.CommentInfo;
 import ink.sher.vueblog.entity.Blog;
+import ink.sher.vueblog.entity.Comment;
 import ink.sher.vueblog.service.BlogService;
+import ink.sher.vueblog.service.CommentService;
 import ink.sher.vueblog.service.TagService;
 import ink.sher.vueblog.service.TypeService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,15 +28,17 @@ public class BlogController {
     private final BlogService blogService;
     private final TagService tagService;
     private final TypeService typeService;
+    private final CommentService commentService;
 
     public BlogController(BlogService blogService, TagService tagService,
-                          TypeService typeService) {
+                          TypeService typeService, CommentService commentService) {
         this.blogService = blogService;
         this.tagService = tagService;
         this.typeService = typeService;
+        this.commentService = commentService;
     }
 
-    @PostMapping("{id}")
+    @GetMapping("{id}")
     public Result blogDetail(@PathVariable Integer id) {
         Blog blog = blogService.getById(id);
         if (blog == null) {
@@ -42,13 +48,38 @@ public class BlogController {
         Blog pre = blogService.getSimpleById(id - 1);
         Blog next = blogService.getSimpleById(id + 1);
 
-        BlogDetail blogDetail = BlogDetail.blogToBlogDetail(blog, pre, next, null);
+
+        BlogDetail blogDetail = BlogDetail.blogToBlogDetail(blog, pre, next,
+               getCommentInfo(id), commentService.getCommentCount(id));
 
         return Result.success(blogDetail);
     }
 
+    private List<CommentInfo> getCommentInfo(Integer id) {
+        List<CommentInfo> commentInfos = null;
+        List<Comment> comments = commentService.getParentComments(id);
 
-    @PostMapping("/page/{page}")
+        if (comments != null && !comments.isEmpty()) {
+            commentInfos = comments.stream().map(comment -> {
+                List<Comment> childs = commentService.getChildComments(comment.getId());
+                return CommentInfo.comment2info(comment, childs);
+            }).collect(Collectors.toList());
+        }
+
+        return commentInfos;
+    }
+
+    @GetMapping("comment/{id}")
+    public Result comment(@PathVariable Integer id) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("comments", getCommentInfo(id));
+        map.put("commentCount", commentService.getCommentCount(id));
+
+        return Result.success(map);
+    }
+
+
+    @GetMapping("page/{page}")
     public Result page(@PathVariable Integer page) {
         QueryWrapper<Blog> blogQueryWrapper = new QueryWrapper<>();
         blogQueryWrapper.select("id", "cover", "update_time", "title", "type_id", "description", "view")

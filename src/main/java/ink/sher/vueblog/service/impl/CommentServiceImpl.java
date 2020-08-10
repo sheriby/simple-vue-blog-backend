@@ -6,15 +6,43 @@ import ink.sher.vueblog.service.CommentService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
-/**
- * <p>
- *  服务实现类
- * </p>
- *
- * @author Sher
- * @since 2020-08-08
- */
+import java.util.List;
+
 @Service
 public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> implements CommentService {
 
+    @Override
+    public Integer getCommentCount(Integer blog) {
+        return this.baseMapper.getCommentCount(blog);
+    }
+
+    @Override
+    public List<Comment> getParentComments(Integer blog) {
+        return this.baseMapper.getParentComments(blog);
+    }
+
+    @Override
+    public List<Comment> getChildComments(Integer comment) {
+       return this.baseMapper.getChildComments(comment);
+    }
+
+    @Override
+    public Integer getMessageCount() {
+        return this.baseMapper.getMessageCount();
+    }
+
+    @Override
+    public List<Comment> getParentMessages() {
+        return this.baseMapper.getParentMessages();
+    }
+
+    @Override
+    public List<Comment> getChildMessages(Integer message) {
+        return this.baseMapper.getChildMessages(message);
+    }
+
+    @Override
+    public Integer saveMessage(Comment comment) {
+        return this.baseMapper.saveMessage(comment);
+    }
 }

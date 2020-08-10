@@ -1,5 +1,7 @@
 package ink.sher.vueblog.dto;
 
+import ch.qos.logback.core.rolling.helper.IntegerTokenConverter;
+import com.mysql.cj.log.Log;
 import ink.sher.vueblog.entity.Blog;
 import ink.sher.vueblog.entity.Comment;
 import lombok.Data;
@@ -25,8 +27,9 @@ public class BlogDetail {
     private String content;
     private SimpleBlogInfo previous;
     private SimpleBlogInfo next;
+    private Integer commentCount;
 
-    private List<Comment> comments;
+    private List<CommentInfo> comments;
 
     @Data
     private static class SimpleBlogInfo {
@@ -48,7 +51,7 @@ public class BlogDetail {
     }
 
     public static BlogDetail blogToBlogDetail(Blog blog, Blog previous,
-                                              Blog next, List<Comment> comments) {
+                                              Blog next, List<CommentInfo> comments, Integer commentCount) {
         BlogDetail blogDetail = new BlogDetail();
         blogDetail.setId(blog.getId());
         blogDetail.setTitle(blog.getTitle());
@@ -56,6 +59,7 @@ public class BlogDetail {
         blogDetail.setView(blog.getView());
         blogDetail.setCover(blog.getCover());
         blogDetail.setContent(blog.getContent());
+        blogDetail.setCommentCount(commentCount);
 
         SimpleBlogInfo pre = SimpleBlogInfo.blog2Simple(previous);
         SimpleBlogInfo nxt = SimpleBlogInfo.blog2Simple(next);

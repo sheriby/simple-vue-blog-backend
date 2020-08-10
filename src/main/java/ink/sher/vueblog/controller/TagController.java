@@ -2,6 +2,7 @@ package ink.sher.vueblog.controller;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.mysql.cj.log.Log;
 import ink.sher.vueblog.common.Result;
 import ink.sher.vueblog.dto.SimpleBlog;
 import ink.sher.vueblog.dto.TagInfo;
@@ -31,14 +32,28 @@ public class TagController {
         this.blogService = blogService;
     }
 
-    @PostMapping
-    public Result tagInfo() {
+    @GetMapping
+    public Result tagInfo(@RequestParam(required = false) Integer id) {
         List<Tag> tags = tagService.list();
-        Integer tagId = tags.get(0).getId();
+        Integer tagId = null;
+        TagInfo tag = null;
+        if (id != null) {
+            tagId = id;
+            Tag t = tagService.getById(tagId);
+            if (t == null) {
+                return Result.failure();
+            }
+            tag = TagInfo.tag2TagInfo(t, 0);
+        } else {
+            tagId = tags.get(0).getId();
+        }
 
         List<TagInfo> tagInfos = tags.stream().
-                map(tag -> TagInfo.tag2TagInfo(tag, blogService.getBlogCountByTagId(tag.getId()))).
+                map(t -> TagInfo.tag2TagInfo(t, blogService.getBlogCountByTagId(t.getId()))).
                 collect(Collectors.toList());
+        if (tag == null) {
+            tag = tagInfos.get(0);
+        }
 
         Page<Blog> page = new Page<>(1, 1);
         List<SimpleBlog> simpleBlogs = null;
@@ -49,14 +64,14 @@ public class TagController {
         }
 
         HashMap<String, Object> map = new HashMap<>();
-        map.put("tag", tagInfos.get(0));
+        map.put("tag", tag);
         map.put("tags", tagInfos);
         map.put("blogs", simpleBlogs);
 
         return Result.success(map);
     }
 
-    @PostMapping("/{tagId}/{page}")
+    @GetMapping("/{tagId}/{page}")
     public Result tagInfo(@PathVariable Integer tagId, @PathVariable Integer page) {
         Page<Blog> pageable = new Page<>(page, 1);
         List<Blog> blogs = blogService.getBlogsByTadId(tagId, pageable);
