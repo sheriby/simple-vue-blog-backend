@@ -11,4 +11,15 @@
     <select id="getBlogIdsByTagId" resultType="java.lang.Integer">
         select blogid from t_blog_tags where tagid = #{id} limit #{start}, #{size}
     </select>
+    <select id="getAllYears" resultType="java.lang.String">
+        select distinct date_format(create_time, '%Y') as d from t_blog order by d desc
+    </select>
+    <select id="getAllMonths" resultType="java.lang.String">
+        select distinct date_format(create_time, '%m') as m from t_blog
+        where date_format(create_time, '%Y') = #{year} order by m desc
+    </select>
+    <select id="getBlogByTime" resultType="ink.sher.vueblog.entity.Blog">
+        select id, title, create_time from t_blog
+        where date_format(create_time, '%Y%m') = #{yearmonth} order by create_time desc
+    </select>
 </mapper>

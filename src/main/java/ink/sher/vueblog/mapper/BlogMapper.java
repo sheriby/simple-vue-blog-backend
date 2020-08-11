@@ -20,4 +20,10 @@ public interface BlogMapper extends BaseMapper<Blog> {
     Integer getBlogCountByTagId(Integer id);
 
     List<Integer> getBlogIdsByTagId(Integer id, int start, int size);
+
+    List<String> getAllYears();
+
+    List<String> getAllMonths(String year);
+
+    List<Blog> getBlogByTime(String yearmonth);
 }

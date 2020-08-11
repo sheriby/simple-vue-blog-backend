@@ -2,10 +2,12 @@ package ink.sher.vueblog.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import ink.sher.vueblog.dto.ArchiveBlog;
 import ink.sher.vueblog.entity.Blog;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -26,4 +28,8 @@ public interface BlogService extends IService<Blog> {
     Integer getBlogCountByTagId(Integer id);
 
     List<Blog> getBlogsByTadId(Integer tagId, Page<Blog> page);
+
+    List<String> getAllYears();
+
+    Map<String, List<ArchiveBlog>> getArchive(String year);
 }
