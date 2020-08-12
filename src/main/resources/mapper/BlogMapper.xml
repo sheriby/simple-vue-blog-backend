@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="ink.sher.vueblog.mapper.BlogMapper">
+    <update id="setBlogTags">
+       insert into t_blog_tags (blogid, tagid) values
+        <foreach collection="tags" item="item" separator=",">
+            (#{blogid}, #{item.id})
+        </foreach>
+    </update>
+
+    <delete id="removeAllTagsByBlogId">
+        delete from t_blog_tags where blogid = #{id}
+    </delete>
 
     <select id="getSimpleById" resultType="ink.sher.vueblog.entity.Blog">
         select id, cover, title from t_blog where id = #{id}

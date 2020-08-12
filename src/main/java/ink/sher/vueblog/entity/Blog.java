@@ -36,6 +36,6 @@ public class Blog implements Serializable {
 
     private Integer view;
 
-    private String typeId;
+    private Integer typeId;
 
 }

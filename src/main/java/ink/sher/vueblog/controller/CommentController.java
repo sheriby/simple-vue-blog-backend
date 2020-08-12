@@ -1,17 +1,12 @@
 package ink.sher.vueblog.controller;
 
 
-import com.mysql.cj.log.Log;
 import ink.sher.vueblog.common.Result;
-import ink.sher.vueblog.dto.BlogInfo;
 import ink.sher.vueblog.dto.CommentInfo;
 import ink.sher.vueblog.entity.Comment;
 import ink.sher.vueblog.service.CommentService;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,7 +53,6 @@ public class CommentController {
 
     @PostMapping("/message")
     public Result saveMessage(@RequestBody Comment comment) {
-        System.out.println(comment);
         commentService.saveMessage(comment);
 
         return Result.success(null);

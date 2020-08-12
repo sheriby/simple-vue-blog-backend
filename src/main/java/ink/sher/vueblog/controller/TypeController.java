@@ -1,6 +1,7 @@
 package ink.sher.vueblog.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import ink.sher.vueblog.common.Result;
 import ink.sher.vueblog.dto.TypeInfo;
@@ -28,12 +29,21 @@ public class TypeController {
         this.blogService = blogService;
     }
 
-    @PostMapping("{id}/{page}")
+    @GetMapping("{id}/{page}")
     public Result blogs(@PathVariable Integer id, @PathVariable Integer page) {
         Type type = typeService.getById(id);
         Page<Blog> pageable = new Page<>(page, 2);
         List<Blog> blogs = blogService.getBlogsByTypeId(id, pageable);
 
         return Result.success(TypeInfo.getInstance(type, blogs));
+    }
+
+    @GetMapping
+    public Result listTypes() {
+        QueryWrapper<Type> wrapper = new QueryWrapper<>();
+        wrapper.select("id", "name").orderByAsc("id");
+        List<Type> types = typeService.list(wrapper);
+
+        return Result.success(types);
     }
 }

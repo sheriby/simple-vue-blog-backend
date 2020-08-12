@@ -1,6 +1,7 @@
 package ink.sher.vueblog.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mysql.cj.log.Log;
 import ink.sher.vueblog.common.Result;
@@ -82,6 +83,16 @@ public class TagController {
                             .collect(Collectors.toList());
 
         return Result.success(simpleBlogs);
+    }
+
+    @GetMapping("/tags")
+    public Result listTags() {
+        QueryWrapper<Tag> wrapper = new QueryWrapper<>();
+        wrapper.select("id", "name").orderByAsc("id");
+
+        List<Tag> tags = tagService.list(wrapper);
+
+        return Result.success(tags);
     }
 
 }

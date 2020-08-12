@@ -5,11 +5,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mysql.cj.log.Log;
 import ink.sher.vueblog.common.Result;
-import ink.sher.vueblog.dto.ArchiveBlog;
-import ink.sher.vueblog.dto.BlogDetail;
-import ink.sher.vueblog.dto.BlogInfo;
-import ink.sher.vueblog.dto.CommentInfo;
+import ink.sher.vueblog.dto.*;
 import ink.sher.vueblog.entity.Blog;
 import ink.sher.vueblog.entity.Comment;
 import ink.sher.vueblog.service.BlogService;
@@ -119,6 +117,13 @@ public class BlogController {
         return Result.success(map);
     }
 
+    @PostMapping
+    public Result postBlog(@RequestBody BlogInfo blog) {
 
+        System.out.println(blog);
+        blogService.updateBlogAndTag(blog.toBlog(), blog.getTags());
+
+        return Result.success(null);
+    }
 
 }

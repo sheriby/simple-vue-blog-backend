@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import ink.sher.vueblog.dto.ArchiveBlog;
 import ink.sher.vueblog.entity.Blog;
 import com.baomidou.mybatisplus.extension.service.IService;
+import ink.sher.vueblog.entity.Tag;
+import ink.sher.vueblog.entity.Type;
 
 import java.util.List;
 import java.util.Map;
@@ -32,4 +34,6 @@ public interface BlogService extends IService<Blog> {
     List<String> getAllYears();
 
     Map<String, List<ArchiveBlog>> getArchive(String year);
+
+    void updateBlogAndTag(Blog blog, List<Tag> tags);
 }
