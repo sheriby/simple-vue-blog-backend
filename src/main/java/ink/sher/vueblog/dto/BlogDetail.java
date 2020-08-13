@@ -1,9 +1,6 @@
 package ink.sher.vueblog.dto;
 
-import ch.qos.logback.core.rolling.helper.IntegerTokenConverter;
-import com.mysql.cj.log.Log;
 import ink.sher.vueblog.entity.Blog;
-import ink.sher.vueblog.entity.Comment;
 import lombok.Data;
 
 import java.util.Date;

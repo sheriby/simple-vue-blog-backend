@@ -10,16 +10,14 @@ import ink.sher.vueblog.common.Result;
 import ink.sher.vueblog.dto.*;
 import ink.sher.vueblog.entity.Blog;
 import ink.sher.vueblog.entity.Comment;
+import ink.sher.vueblog.entity.Tag;
 import ink.sher.vueblog.service.BlogService;
 import ink.sher.vueblog.service.CommentService;
 import ink.sher.vueblog.service.TagService;
 import ink.sher.vueblog.service.TypeService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -58,6 +56,17 @@ public class BlogController {
         return Result.success(blogDetail);
     }
 
+    @GetMapping("bloginfo/{id}")
+    public Result blogInfo(@PathVariable Integer id) {
+        Blog blog = blogService.getById(id);
+        if (blog == null) {
+            return Result.failure("No suck blog");
+        }
+
+        return Result.success(BlogInfo.blogToBlogInfo(blog, tagService.getTagsByBlogId(blog.getId()),
+                typeService.getById(blog.getTypeId()), null));
+    }
+
     private List<CommentInfo> getCommentInfo(Integer id) {
         List<CommentInfo> commentInfos = null;
         List<Comment> comments = commentService.getParentComments(id);
@@ -83,14 +92,16 @@ public class BlogController {
 
 
     @GetMapping("page/{page}")
-    public Result page(@PathVariable Integer page) {
+    public Result page(@PathVariable Integer page,
+                       @RequestParam(required = false, defaultValue = "6") Integer size) {
         QueryWrapper<Blog> blogQueryWrapper = new QueryWrapper<>();
         blogQueryWrapper.select("id", "cover", "update_time", "title", "type_id", "description", "view")
                 .orderByDesc("update_time");
 
-        Page<Blog> pages = new Page<>(page, 2);
+        Page<Blog> pages = new Page<>(page, size);
         blogService.blogPage(pages, blogQueryWrapper);
         List<Blog> blogs = pages.getRecords();
+        long total = pages.getTotal();
 
         if (blogs.size() == 0) {
             return Result.failure("No Data");
@@ -98,11 +109,16 @@ public class BlogController {
 
         List<BlogInfo> blogInfos = blogs.stream()
                 .map(blog -> BlogInfo.blogToBlogInfo(blog,
-                        tagService.getTagsByBlogId(blog.getId()), typeService.getById(blog.getTypeId())))
+                        tagService.getTagsByBlogId(blog.getId()),
+                        typeService.getById(blog.getTypeId()),
+                        commentService.getCommentCount(blog.getId())))
                 .collect(Collectors.toList());
 
-        return Result.success(blogInfos);
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("total", total);
+        map.put("blogs", blogInfos);
 
+        return Result.success(map);
     }
 
     @GetMapping("/archive")
@@ -119,11 +135,38 @@ public class BlogController {
 
     @PostMapping
     public Result postBlog(@RequestBody BlogInfo blog) {
-
-        System.out.println(blog);
-        blogService.updateBlogAndTag(blog.toBlog(), blog.getTags());
+        List<Tag> tags = blog.getTags();
+        for (Tag tag : tags) {
+            if (tag.getId() == null) {
+                tagService.save(tag);
+            }
+        }
+        blogService.updateBlogAndTag(blog.toBlog(), tags);
 
         return Result.success(null);
     }
 
+    @GetMapping("/search")
+    public Result searchBlog(@RequestParam(required = false) String title,
+                             @RequestParam(required = false) Integer typeId,
+                             @RequestParam(required = false) Integer tagId) {
+        List<Blog> blogs = blogService.searchBlog(title, typeId, tagId);
+
+        List<BlogInfo> bloginfos = blogs.stream().map(blog -> BlogInfo.blogToBlogInfo(blog, null,
+                typeService.getById(blog.getTypeId()),
+                commentService.getCommentCount(blog.getId()))).collect(Collectors.toList());
+
+        return Result.success(bloginfos);
+    }
+
+    @DeleteMapping("{id}")
+    public Result delete(@PathVariable Integer id) {
+        try {
+            blogService.deleteBlogById(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure("Delete Failure");
+        }
+        return Result.success("Delete Success");
+    }
 }

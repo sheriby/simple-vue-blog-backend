@@ -11,6 +11,8 @@ import ink.sher.vueblog.service.BlogService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.sql.Time;
 import java.util.*;
@@ -76,6 +78,7 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
 
 
     @Override
+    @Transactional
     public void updateBlogAndTag(Blog blog, List<Tag> tags) {
         Integer blogid = blog.getId();
         blog.setUpdateTime(new Date());
@@ -85,6 +88,7 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
             blogid = blog.getId();
         } else {
             this.baseMapper.removeAllTagsByBlogId(blog.getId());
+            this.baseMapper.updateById(blog);
         }
 
         if (tags != null && !tags.isEmpty()) {
@@ -93,5 +97,39 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
             map.put("tags", tags);
             this.baseMapper.setBlogTags(map);
         }
+    }
+
+    @Override
+    public boolean blogHasTag(Integer blogid, Integer tagid) {
+        return this.baseMapper.blogHasTag(blogid, tagid) != 0;
+    }
+
+
+    @Override
+    public List<Blog> searchBlog(String title, Integer typeId, Integer tagId) {
+        QueryWrapper<Blog> wrapper = new QueryWrapper<>();
+        wrapper.select("id", "cover", "update_time", "type_id", "view", "title", "description");
+
+        if (!StringUtils.isEmpty(title)) {
+            wrapper.like("title", title);
+        }
+        if (typeId != null) {
+            wrapper.eq("type_id", typeId);
+        }
+
+        List<Blog> blogs = this.baseMapper.selectList(wrapper);
+        if (tagId != null) {
+            blogs = blogs.stream().
+                    filter(blog -> blogHasTag(blog.getId(), tagId)).collect(Collectors.toList());
+        }
+
+        return blogs;
+    }
+
+    @Override
+    public void deleteBlogById(Integer id) {
+        this.baseMapper.deleteBlogTags(id);
+        this.baseMapper.deleteBlogComment(id);
+        this.baseMapper.deleteById(id);
     }
 }

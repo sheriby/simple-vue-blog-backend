@@ -36,4 +36,10 @@ public interface BlogService extends IService<Blog> {
     Map<String, List<ArchiveBlog>> getArchive(String year);
 
     void updateBlogAndTag(Blog blog, List<Tag> tags);
+
+    boolean blogHasTag(Integer blogid, Integer tagid);
+
+    List<Blog> searchBlog(String title, Integer typeId, Integer tagId);
+
+    void deleteBlogById(Integer id);
 }

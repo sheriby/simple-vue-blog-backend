@@ -25,10 +25,11 @@ public class BlogInfo {
     private String title;
     private String desc;
     private Integer view;
+    private Integer commentCount;
     private List<Tag> tags;
     private Type type;
 
-    public static BlogInfo blogToBlogInfo(Blog blog, List<Tag> tags, Type type) {
+    public static BlogInfo blogToBlogInfo(Blog blog, List<Tag> tags, Type type, Integer commentCount) {
         BlogInfo blogInfo = new BlogInfo();
         blogInfo.setId(blog.getId());
         blogInfo.setCover(blog.getCover());
@@ -37,6 +38,7 @@ public class BlogInfo {
         blogInfo.setTitle(blog.getTitle());
         blogInfo.setDesc(blog.getDescription());
         blogInfo.setView(blog.getView());
+        blogInfo.setCommentCount(commentCount);
 
         blogInfo.setTags(tags);
         blogInfo.setType(type);

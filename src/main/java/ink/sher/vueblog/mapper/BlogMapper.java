@@ -32,4 +32,10 @@ public interface BlogMapper extends BaseMapper<Blog> {
     Integer removeAllTagsByBlogId(Integer id);
 
     Integer setBlogTags(HashMap<String, Object> map);
+
+    Integer blogHasTag(Integer blogid, Integer tagid);
+
+    Integer deleteBlogTags(Integer blogid);
+
+    Integer deleteBlogComment(Integer blogid);
 }

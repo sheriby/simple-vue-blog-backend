@@ -11,6 +11,12 @@
     <delete id="removeAllTagsByBlogId">
         delete from t_blog_tags where blogid = #{id}
     </delete>
+    <delete id="deleteBlogTags">
+        delete from t_blog_tags where blogid = #{blogid}
+    </delete>
+    <delete id="deleteBlogComment">
+        delete from t_comment where blog_id = #{blogid}
+    </delete>
 
     <select id="getSimpleById" resultType="ink.sher.vueblog.entity.Blog">
         select id, cover, title from t_blog where id = #{id}
@@ -31,5 +37,8 @@
     <select id="getBlogByTime" resultType="ink.sher.vueblog.entity.Blog">
         select id, title, create_time from t_blog
         where date_format(create_time, '%Y%m') = #{yearmonth} order by create_time desc
+    </select>
+    <select id="blogHasTag" resultType="java.lang.Integer">
+        select count(blogid) from t_blog_tags where blogid = #{blogid} and tagid = #{tagid}
     </select>
 </mapper>
