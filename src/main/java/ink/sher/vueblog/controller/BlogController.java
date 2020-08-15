@@ -4,10 +4,11 @@ package ink.sher.vueblog.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mysql.cj.log.Log;
 import ink.sher.vueblog.common.Result;
-import ink.sher.vueblog.dto.*;
+import ink.sher.vueblog.dto.ArchiveBlog;
+import ink.sher.vueblog.dto.BlogDetail;
+import ink.sher.vueblog.dto.BlogInfo;
+import ink.sher.vueblog.dto.CommentInfo;
 import ink.sher.vueblog.entity.Blog;
 import ink.sher.vueblog.entity.Comment;
 import ink.sher.vueblog.entity.Tag;
@@ -15,9 +16,13 @@ import ink.sher.vueblog.service.BlogService;
 import ink.sher.vueblog.service.CommentService;
 import ink.sher.vueblog.service.TagService;
 import ink.sher.vueblog.service.TypeService;
+import ink.sher.vueblog.util.MarkDownUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -45,6 +50,8 @@ public class BlogController {
         if (blog == null) {
             return Result.failure("No suck blog");
         }
+
+        blog.setContent(MarkDownUtils.markToHtmlExt(blog.getContent()));
 
         Blog pre = blogService.getSimpleById(id - 1);
         Blog next = blogService.getSimpleById(id + 1);

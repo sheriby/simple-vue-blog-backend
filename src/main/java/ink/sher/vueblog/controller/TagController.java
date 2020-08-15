@@ -3,7 +3,6 @@ package ink.sher.vueblog.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.mysql.cj.log.Log;
 import ink.sher.vueblog.common.Result;
 import ink.sher.vueblog.dto.SimpleBlog;
 import ink.sher.vueblog.dto.TagInfo;
@@ -88,11 +87,25 @@ public class TagController {
     @GetMapping("/tags")
     public Result listTags() {
         QueryWrapper<Tag> wrapper = new QueryWrapper<>();
-        wrapper.select("id", "name").orderByAsc("id");
+        wrapper.select("id", "name", "description").orderByAsc("id");
 
         List<Tag> tags = tagService.list(wrapper);
 
         return Result.success(tags);
+    }
+
+    @PostMapping
+    public Result postTag(@RequestBody Tag tag) {
+        tagService.save(tag);
+
+        return Result.success("success");
+    }
+
+    @PutMapping
+    public Result editTag(@RequestBody Tag tag) {
+        tagService.updateById(tag);
+
+        return Result.success("success");
     }
 
 }

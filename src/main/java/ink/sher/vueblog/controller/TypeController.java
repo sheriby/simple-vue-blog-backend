@@ -41,9 +41,23 @@ public class TypeController {
     @GetMapping
     public Result listTypes() {
         QueryWrapper<Type> wrapper = new QueryWrapper<>();
-        wrapper.select("id", "name").orderByAsc("id");
+        wrapper.select("id", "name", "description").orderByAsc("id");
         List<Type> types = typeService.list(wrapper);
 
         return Result.success(types);
+    }
+
+    @PostMapping
+    public Result postType(@RequestBody Type type) {
+        typeService.save(type);
+
+        return Result.success("success");
+    }
+
+    @PutMapping
+    public Result editType(@RequestBody Type type) {
+        typeService.updateById(type);
+
+        return Result.success("success");
     }
 }
