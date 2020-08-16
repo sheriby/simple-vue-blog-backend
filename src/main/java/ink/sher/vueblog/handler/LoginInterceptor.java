@@ -19,9 +19,6 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Methods", "POST,GET,PUT,DELETE");
-        response.setHeader("Access-Control-Allow-Headers", "authorization,content-type");
         if ("GET".equals(request.getMethod())) {
            return true;
         }

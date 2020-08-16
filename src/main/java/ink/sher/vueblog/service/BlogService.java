@@ -2,11 +2,10 @@ package ink.sher.vueblog.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
 import ink.sher.vueblog.dto.ArchiveBlog;
 import ink.sher.vueblog.entity.Blog;
-import com.baomidou.mybatisplus.extension.service.IService;
 import ink.sher.vueblog.entity.Tag;
-import ink.sher.vueblog.entity.Type;
 
 import java.util.List;
 import java.util.Map;
@@ -42,4 +41,6 @@ public interface BlogService extends IService<Blog> {
     List<Blog> searchBlog(String title, Integer typeId, Integer tagId);
 
     void deleteBlogById(Integer id);
+
+    List<Blog> findBlogByKeyword(String keyword);
 }

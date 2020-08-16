@@ -1,16 +1,12 @@
 package ink.sher.vueblog.service;
 
-import ink.sher.vueblog.entity.Type;
 import com.baomidou.mybatisplus.extension.service.IService;
+import ink.sher.vueblog.entity.Type;
 
-/**
- * <p>
- *  服务类
- * </p>
- *
- * @author Sher
- * @since 2020-08-08
- */
+import java.util.List;
+
 public interface TypeService extends IService<Type> {
+
+    List<Type> findTypeByKeyword(String keyword);
 
 }

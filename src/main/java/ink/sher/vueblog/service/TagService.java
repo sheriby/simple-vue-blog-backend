@@ -16,4 +16,6 @@ import java.util.List;
 public interface TagService extends IService<Tag> {
 
     List<Tag> getTagsByBlogId(Integer id);
+
+    List<Tag> findTagByKeyword(String keyword);
 }

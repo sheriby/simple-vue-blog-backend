@@ -12,6 +12,7 @@ import ink.sher.vueblog.dto.CommentInfo;
 import ink.sher.vueblog.entity.Blog;
 import ink.sher.vueblog.entity.Comment;
 import ink.sher.vueblog.entity.Tag;
+import ink.sher.vueblog.entity.Type;
 import ink.sher.vueblog.service.BlogService;
 import ink.sher.vueblog.service.CommentService;
 import ink.sher.vueblog.service.TagService;
@@ -175,5 +176,43 @@ public class BlogController {
             return Result.failure("Delete Failure");
         }
         return Result.success("Delete Success");
+    }
+
+    private Map<String, Object> resToMap(Object object) {
+        Map<String, Object> map = new HashMap<>();
+        if (object instanceof Blog) {
+            map.put("id", ((Blog) object).getId());
+            map.put("name", ((Blog) object).getTitle());
+        } else if (object instanceof Tag) {
+            map.put("id", ((Tag) object).getId());
+            map.put("name", ((Tag) object).getName());
+        } else if (object instanceof Type) {
+            map.put("id", ((Type) object).getId());
+            map.put("name", ((Type) object).getName());
+        }
+        return map;
+    }
+
+    @GetMapping("/search/info")
+    public Result searchInfo(@RequestParam String keyword) {
+        System.out.println(keyword);
+        HashMap<String, Object> map = new HashMap<>();
+
+        List<Blog> blogs = blogService.findBlogByKeyword(keyword);
+        if (blogs != null && !blogs.isEmpty()) {
+            map.put("blogs", blogs.stream().map(this::resToMap));
+        }
+
+        List<Type> types = typeService.findTypeByKeyword(keyword);
+        if (types != null && !types.isEmpty()) {
+            map.put("types", types.stream().map(this::resToMap));
+        }
+
+        List<Tag> tags = tagService.findTagByKeyword(keyword);
+        if (tags != null && !tags.isEmpty()) {
+            map.put("tags", tags.stream().map(this::resToMap));
+        }
+
+        return Result.success(map);
     }
 }

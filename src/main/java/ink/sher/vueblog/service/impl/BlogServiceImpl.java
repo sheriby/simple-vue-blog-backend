@@ -2,19 +2,16 @@ package ink.sher.vueblog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import ink.sher.vueblog.dto.ArchiveBlog;
 import ink.sher.vueblog.entity.Blog;
 import ink.sher.vueblog.entity.Tag;
-import ink.sher.vueblog.entity.Type;
 import ink.sher.vueblog.mapper.BlogMapper;
 import ink.sher.vueblog.service.BlogService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.sql.Time;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -79,6 +76,7 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
 
     @Override
     @Transactional
+    @SuppressWarnings("all")
     public void updateBlogAndTag(Blog blog, List<Tag> tags) {
         Integer blogid = blog.getId();
         blog.setUpdateTime(new Date());
@@ -127,9 +125,22 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
     }
 
     @Override
+    @Transactional
+    @SuppressWarnings("all")
     public void deleteBlogById(Integer id) {
         this.baseMapper.deleteBlogTags(id);
         this.baseMapper.deleteBlogComment(id);
         this.baseMapper.deleteById(id);
+    }
+
+    @Override
+    public List<Blog> findBlogByKeyword(String keyword) {
+        QueryWrapper<Blog> wrapper = new QueryWrapper<>();
+        wrapper.select("id", "title")
+                .like("title", keyword)
+                .or()
+                .like("description", keyword);
+
+        return this.baseMapper.selectList(wrapper);
     }
 }

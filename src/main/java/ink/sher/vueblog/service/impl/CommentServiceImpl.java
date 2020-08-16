@@ -1,10 +1,11 @@
 package ink.sher.vueblog.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import ink.sher.vueblog.entity.Comment;
 import ink.sher.vueblog.mapper.CommentMapper;
 import ink.sher.vueblog.service.CommentService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -42,6 +43,8 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     }
 
     @Override
+    @Transactional
+    @SuppressWarnings("all")
     public Integer saveMessage(Comment comment) {
         return this.baseMapper.saveMessage(comment);
     }

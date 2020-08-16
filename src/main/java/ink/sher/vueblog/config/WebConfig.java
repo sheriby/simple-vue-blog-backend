@@ -1,5 +1,6 @@
 package ink.sher.vueblog.config;
 
+import ink.sher.vueblog.handler.CorsInteceptor;
 import ink.sher.vueblog.handler.LoginInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -19,6 +20,10 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new LoginInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/user/login");
+                .excludePathPatterns("/user/login")
+                .excludePathPatterns("/comment/**");
+
+        registry.addInterceptor(new CorsInteceptor())
+                .addPathPatterns("/**");
     }
 }
